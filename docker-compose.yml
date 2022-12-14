@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  # Django initial
+  backend:
+    image: django
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: 'django_container'
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - db
+    volumes:
+      - .:/home/brainslogicTask
+    ports:
+      - "8000:8000"
+    links:
+      - db
+    depends_on:
+      - migration
+
+  # Django migrate
+  migration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: django
+    container_name: 'django_migrate'
+    command: python manage.py migrate
+    links:
+      - db
+    depends_on:
+      - make_migrations
+
+  # Django makemigratios
+  make_migrations:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: django
+    container_name: 'django_makemigrations'
+    command: python manage.py makemigrations
+    links:
+      - db
