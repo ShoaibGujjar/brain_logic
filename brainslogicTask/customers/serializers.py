@@ -7,7 +7,7 @@ class UserSerializer(ModelSerializer):
     class Meta:
         model=customers
         fields=[
-            "name"
+            "username"
         ]
 
 
@@ -15,7 +15,7 @@ class UserAuthSerializer(ModelSerializer):
     class Meta:
         model=customers
         fields=[
-            'name',
+            'username',
             'id',
             'email'
         ]
@@ -37,7 +37,7 @@ class UserSerializerWithToken(UserSerializer):
     isAdmin = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = customers
-        fields = ['id', 'name', 'email', 'isAdmin','is_author', 'token']
+        fields = ['id', 'username', 'email', 'isAdmin','is_author', 'token']
 
 
     

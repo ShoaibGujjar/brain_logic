@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser,BaseUserManager, Permiss
 
 class CustomersManager(BaseUserManager):
     use_in_migrations=True
-    def create_superuser(self,email,password,name,**other_fields):
+    def create_superuser(self,email,password,username,**other_fields):
         other_fields.setdefault('is_staff',True)
         other_fields.setdefault('is_superuser',True)
         other_fields.setdefault('is_author',True)
@@ -19,10 +19,10 @@ class CustomersManager(BaseUserManager):
         if other_fields.get('is_author') is not True:
             return ValueError('Superuser must be assign is_author=True')
 
-        return self.create_user(email,password,name,**other_fields)
+        return self.create_user(email,password,username,**other_fields)
 
 
-    def create_author(self,email,password,name,**other_fields):
+    def create_author(self,email,password,username,**other_fields):
         other_fields.setdefault('is_staff',False)
         other_fields.setdefault('is_superuser',False)
         other_fields.setdefault('is_author',True)
@@ -30,17 +30,17 @@ class CustomersManager(BaseUserManager):
         if other_fields.get('is_author') is not True:
             return ValueError('Author must be assign is_author=True')
 
-        return self.create_user(email,password,name,**other_fields)
+        return self.create_user(email,password,username,**other_fields)
 
 
-    def create_user(self,email,password,name,**other_fields):
+    def create_user(self,email,password,username,**other_fields):
 
         if not email:
             raise ValueError('You must provide a valid email')
 
         email=self.normalize_email(email)
 
-        customers=self.model(email=email,name=name,**other_fields)
+        customers=self.model(email=email,username=username,**other_fields)
 
         customers.set_password(password)
 
