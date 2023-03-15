@@ -1,6 +1,7 @@
 from asyncio.windows_events import NULL
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractUser
 
 class CustomersManager(BaseUserManager):
     use_in_migrations=True
@@ -50,7 +51,15 @@ class CustomersManager(BaseUserManager):
         
 
 class customers(AbstractBaseUser,PermissionsMixin):
-
+    GOLD_GROUP = 'gold'
+    SILVER_GROUP = 'silver'
+    BRONZE_GROUP = 'bronze'
+    GROUP_CHOICES = [
+        (GOLD_GROUP, 'Gold'),
+        (SILVER_GROUP, 'Silver'),
+        (BRONZE_GROUP, 'Bronze')
+    ]
+    group = models.CharField(max_length=10, choices=GROUP_CHOICES, default=BRONZE_GROUP)
     username=models.CharField(max_length=225,null=True,blank=True)
     email=models.EmailField(max_length=225,unique=True)
     last_login=models.DateTimeField(auto_now_add=True)

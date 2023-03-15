@@ -10,11 +10,15 @@ from .serializers import UserSerializer, UserSerializerWithToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
+from django.shortcuts import render
+from brainslogicTask.utils import ratelimit_request
+
+# Apply the decorator to the view function
 
 # from django.shortcuts import render
 import logging
 
-
+@ratelimit_request(key_prefix='ip', limit=5, expire_time=60)
 @api_view(('GET','POST'))
 # @renderer_classes((TemplateHTMLRenderer, JSONRenderer))
 def get_client_ip(request):
@@ -30,6 +34,7 @@ def get_client_ip(request):
     f.close()
     return Response(ip)
 
+# @ratelimit_request(key_prefix='ip', limit=5, expire_time=60)
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
@@ -41,7 +46,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return data
 
-
+# @ratelimit_request(key_prefix='ip', limit=5, expire_time=60)
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 

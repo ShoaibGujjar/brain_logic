@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 from datetime import timedelta
+import redis
+DEFAULT_AUTO_FIELD='django.db.models.AutoField' 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -29,7 +31,6 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'customers'
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -52,9 +54,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'customers.middleware.GroupRateLimitMiddleware',
 ]
 
 ROOT_URLCONF = 'brainslogicTask.urls'
+
 
 TEMPLATES = [
     {
@@ -71,6 +75,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 LOGIN_REDIRECT_URL = "/"
 
@@ -127,6 +132,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Rest framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
        #'rest_framework.authentication.TokenAuthentication',
@@ -175,7 +181,10 @@ SIMPLE_JWT = {
 # Auth settings
 AUTH_USER_MODEL='customers.customers'
 ACCOUNT_ADAPTER = 'customers.models.CustomersManager'
-
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+#     'customers.backends.GroupRateLimitBackend',
+# ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
@@ -183,13 +192,22 @@ REST_FRAMEWORK = {
 }
 
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": {
-            "SOCKET_CONNECT_TIMEOUT": 5,  # seconds
-            "SOCKET_TIMEOUT": 5,  # seconds
-        }
-    }
-}
+
+# Redis connection settings
+REDIS_HOST = 'http://127.0.0.1'
+REDIS_PORT = 6379
+REDIS_DB = 0
+
+# Create a Redis connection
+r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
+
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379/1",
+#         "OPTIONS": {
+#             "SOCKET_CONNECT_TIMEOUT": 5,  # seconds
+#             "SOCKET_TIMEOUT": 5,  # seconds
+#         }
+#     }
+# }
